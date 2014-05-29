@@ -13,8 +13,8 @@ password = secret
 banner = Welcome to Electrum!
 #irc = no
 #irc_nick = <yournickname>
-#ssl_certfile = /path/to/electrum-server.crt
-#ssl_keyfile = /path/to/electrum-server.key
+#ssl_certfile = /path/to/server.crt
+#ssl_keyfile = /path/to/server.key
 
 # default backend is leveldb (pruning server)
 backend = leveldb
@@ -26,9 +26,9 @@ path_fulltree = /path/to/your/database
 # for each address, history will be pruned if it is longer than this limit
 pruning_limit = 100
 
-[bitcoind]
+[viacoind]
 host = localhost
-port = 8332
+port = 5222
 # user and password from bitcoin.conf
 user = user
 password = password

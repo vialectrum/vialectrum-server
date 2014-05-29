@@ -44,7 +44,7 @@ def create_config():
     config = ConfigParser.ConfigParser()
     # set some defaults, which will be overwritten by the config file
     config.add_section('server')
-    config.set('server', 'banner', 'Welcome to Electrum!')
+    config.set('server', 'banner', 'Welcome to Vialectrum!')
     config.set('server', 'host', 'localhost')
     config.set('server', 'report_host', '')
     config.set('server', 'stratum_tcp_port', '50001')
@@ -70,11 +70,11 @@ def create_config():
     config.set('leveldb', 'pruning_limit', '100')
 
     for path in ('/etc/', ''):
-        filename = path + 'electrum.conf'
+        filename = path + 'vialectrum.conf'
         attempt_read_config(config, filename)
 
     try:
-        with open('/etc/electrum.banner', 'r') as f:
+        with open('/etc/vialectrum.banner', 'r') as f:
             config.set('server', 'banner', f.read())
     except IOError:
         pass
@@ -177,7 +177,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     print "\n\n\n\n\n"
-    print_log("Starting Electrum server on", host)
+    print_log("Starting Vialectrum server on", host)
 
     # Create hub
     dispatcher = Dispatcher(config)
@@ -240,4 +240,4 @@ if __name__ == '__main__':
 
     server_proc.join()
     chain_proc.join()
-    print_log("Electrum Server stopped")
+    print_log("Vialectrum Server stopped")

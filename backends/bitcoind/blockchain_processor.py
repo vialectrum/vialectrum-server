@@ -55,17 +55,17 @@ class BlockchainProcessor(Processor):
         self.dblock = threading.Lock()
 
         self.bitcoind_url = 'http://%s:%s@%s:%s/' % (
-            config.get('bitcoind', 'user'),
-            config.get('bitcoind', 'password'),
-            config.get('bitcoind', 'host'),
-            config.get('bitcoind', 'port'))
+            config.get('viacoind', 'user'),
+            config.get('viacoind', 'password'),
+            config.get('viacoind', 'host'),
+            config.get('viacoind', 'port'))
 
         while True:
             try:
                 self.bitcoind('getinfo')
                 break
             except:
-                print_log('cannot contact bitcoind...')
+                print_log('cannot contact viacoind...')
                 time.sleep(5)
                 continue
 
@@ -113,7 +113,7 @@ class BlockchainProcessor(Processor):
         try:
             respdata = urllib.urlopen(self.bitcoind_url, postdata).read()
         except:
-            print_log("error calling bitcoind")
+            print_log("error calling viacoind")
             traceback.print_exc(file=sys.stdout)
             self.shared.stop()
 
@@ -618,7 +618,7 @@ class BlockchainProcessor(Processor):
         try:
             respdata = urllib.urlopen(self.bitcoind_url, postdata).read()
         except:
-            print_log("bitcoind error (getfullblock)")
+            print_log("viacoind error (getfullblock)")
             traceback.print_exc(file=sys.stdout)
             self.shared.stop()
 
@@ -627,7 +627,7 @@ class BlockchainProcessor(Processor):
         for ir in r:
             if ir['error'] is not None:
                 self.shared.stop()
-                print_log("Error: make sure you run bitcoind with txindex=1; use -reindex if needed.")
+                print_log("Error: make sure you run viacoind with txindex=1; use -reindex if needed.")
                 raise BaseException(ir['error'])
             rawtxdata.append(ir['result'])
         block['tx'] = rawtxdata

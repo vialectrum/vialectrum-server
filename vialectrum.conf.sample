@@ -28,7 +28,7 @@ pruning_limit = 100
 
 [viacoind]
 host = localhost
-port = 5222
+port = 25222
 # user and password from bitcoin.conf
 user = user
 password = password

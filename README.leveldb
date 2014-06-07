@@ -39,7 +39,7 @@ make sure you have libtool, automake and pkg-config
 
 __________________________________________________________
 
-3. edit /etc/electrum.conf : 
+3. edit /etc/vialectrum.conf : 
 
 [server]
 backend = leveldb

@@ -107,7 +107,7 @@ def public_key_to_bc_address(public_key):
     return hash_160_to_bc_address(hash_160(public_key))
 
 
-def hash_160_to_bc_address(h160, addrtype = 127):
+def hash_160_to_bc_address(h160, addrtype = 71):
     if h160 == 'None':
         return 'None'
     vh160 = chr(addrtype) + h160

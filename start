@@ -26,7 +26,7 @@ rmdir $path --ignore-fail-on-non-empty
 
 if [ ! -d $path ]; then
     echo "Database not found in $path."
-    read -p "Do you want to download it from the Electrum foundry to $path ? " -n 1 -r
+    read -p "Do you want to download it from the Vialectrum foundry to $path ? " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
 	mkdir -p $path
@@ -35,4 +35,4 @@ if [ ! -d $path ]; then
 fi
 
 echo "Starting server as daemon"
-nohup /usr/bin/python -u server.py &> /var/log/electrum.log &
+nohup /usr/bin/python -u server.py &> /var/log/vialectrum.log &

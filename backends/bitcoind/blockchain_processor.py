@@ -650,14 +650,19 @@ class BlockchainProcessor(Processor):
 
             # not done..
             self.up_to_date = False
-            next_block_hash = self.bitcoind('getblockhash', [self.storage.height + 1])
-            next_block = self.getfullblock(next_block_hash)
-            self.mtime('daemon')
+            revert = False
+            try:
+                next_block_hash = self.bitcoind('getblockhash', [self.storage.height + 1])
+            except:
+                revert = True
+            if not revert:
+                next_block = self.getfullblock(next_block_hash)
+                self.mtime('daemon')
 
             # fixme: this is unsafe, if we revert when the undo info is not yet written
-            revert = (random.randint(1, 100) == 1) if self.test_reorgs else False
+            revert = revert or ((random.randint(1, 100) == 1) if self.test_reorgs else False)
 
-            if (next_block.get('previousblockhash') == self.storage.last_hash) and not revert:
+            if not revert and (next_block.get('previousblockhash') == self.storage.last_hash):
 
                 prev_root_hash = self.storage.get_root_hash()
 

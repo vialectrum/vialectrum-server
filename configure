@@ -108,7 +108,7 @@ fi
 
 
 bitcoind_user=$(read_config "viacoind_user")
-if ! [ "$viacoind_user" ]; then
+if ! [ "$bitcoind_user" ]; then
     read -p "rpcuser (from your viacoin.conf file): " -r
     write_config "viacoind_user" $REPLY
 fi

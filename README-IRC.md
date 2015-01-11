@@ -1,7 +1,7 @@
 IRC is used by Electrum server to find 'peers' - other Electrum servers. The
 current list can be seen by running:
 
-    ./server.py peers
+    electrum-server peers
 
 The following config file options are used by the IRC part of Electrum server:
 
@@ -14,7 +14,7 @@ The following config file options are used by the IRC part of Electrum server:
 
 `irc` is used to determine whether the IRC thread will be started or the 
 Electrum server will run in private mode (default). In private mode, 
-`./server.py peers` will always return an empty list.
+`electrum-server peers` will always return an empty list.
 
 `host` is a fully-qualified domain name (FQDN) of your Electrum server. It is
 used both when binding the listener for incoming client connections and as part
@@ -37,4 +37,8 @@ composing the IRC nickname to identify your server on #electrum.
 Please note the IRC name field can only contain 50 chars and will be composed
 of `host` + protocol version number + Port numbers for the various protocols.
 Please check whether port numbers are cut off at the end   
+
+
+Example of port forwarding using iptables:
+iptables -t nat -A PREROUTING -p tcp --dport 110 -j REDIRECT --to-ports 50002
 

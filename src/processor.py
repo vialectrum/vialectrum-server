@@ -3,11 +3,10 @@ import Queue as queue
 import socket
 import threading
 import time
-import traceback
 import sys
 
 from utils import random_string, timestr, print_log
-
+from utils import logger
 
 class Shared:
 
@@ -15,6 +14,19 @@ class Shared:
         self.lock = threading.Lock()
         self._stopped = False
         self.config = config
+        self._paused = True
+
+    def paused(self):
+        with self.lock:
+            return self._paused
+
+    def pause(self):
+        with self.lock:
+            self._paused = True
+
+    def unpause(self):
+        with self.lock:
+            self._paused = False
 
     def stop(self):
         print_log("Stopping Stratum")
@@ -34,7 +46,7 @@ class Processor(threading.Thread):
         self.dispatcher = None
         self.queue = queue.Queue()
 
-    def process(self, session, request):
+    def process(self, request):
         pass
 
     def add_request(self, session, request):
@@ -50,13 +62,18 @@ class Processor(threading.Thread):
     def run(self):
         while not self.shared.stopped():
             try:
-                request, session = self.queue.get(True, timeout=1)
+                session, request = self.queue.get(True, timeout=1)
+                msg_id = request.get('id')
             except:
                 continue
             try:
-                self.process(request, session)
+                result = self.process(request)
+                self.push_response(session, {'id': msg_id, 'result': result})
+            except BaseException, e:
+                self.push_response(session, {'id': msg_id, 'error':str(e)})
             except:
-                traceback.print_exc(file=sys.stdout)
+                logger.error("process error", exc_info=True)
+                self.push_response(session, {'id': msg_id, 'error':'unknown error'})
 
         self.close()
 
@@ -119,7 +136,7 @@ class RequestDispatcher(threading.Thread):
             try:
                 self.do_dispatch(session, request)
             except:
-                traceback.print_exc(file=sys.stdout)
+                logger.error('dispatch',exc_info=True)
 
             if time.time() - lastgc > 60.0:
                 self.collect_garbage()
@@ -200,23 +217,12 @@ class Session:
     def key(self):
         return self.name + self.address
 
-
     # Debugging method. Doesn't need to be threadsafe.
     def info(self):
-        for sub in self.subscriptions:
-            #print sub
-            method = sub[0]
-            if method == 'blockchain.address.subscribe':
-                addr = sub[1]
-                break
-        else:
-            addr = None
-
         if self.subscriptions:
             print_log("%4s" % self.name,
-                      "%15s" % self.address,
-                      "%35s" % addr,
-                      "%3d" % len(self.subscriptions),
+                      "%21s" % self.address,
+                      "%4d" % len(self.subscriptions),
                       self.version)
 
     def stop(self):
@@ -240,12 +246,13 @@ class Session:
 
 
     def subscribe_to_service(self, method, params):
+        if self.stopped():
+            return
+        # append to self.subscriptions only if this does not raise
+        self.bp.do_subscribe(method, params, self)
         with self.lock:
-            if self._stopped:
-                return
             if (method, params) not in self.subscriptions:
                 self.subscriptions.append((method,params))
-        self.bp.do_subscribe(method, params, self)
 
 
     def stop_subscriptions(self):

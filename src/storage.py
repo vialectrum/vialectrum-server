@@ -1,7 +1,14 @@
-import plyvel, ast, hashlib, traceback, os
-from processor import print_log
-from utils import *
+import plyvel
+import ast
+import hashlib
+import os
+import sys
 
+from processor import print_log, logger
+from utils import bc_address_to_hash_160, hash_160_to_pubkey_address, hex_to_int, int_to_hex, Hash
+
+global GENESIS_HASH
+GENESIS_HASH = '4e9b54001f9976049830128ec0331515eaabe35a70970d79971da1539a400ba1'
 
 """
 Patricia tree for hashing unspents
@@ -15,7 +22,7 @@ class Storage(object):
 
     def __init__(self, config, shared, test_reorgs):
 
-        self.dbpath = config.get('leveldb', 'path_fulltree')
+        self.dbpath = config.get('leveldb', 'path')
         if not os.path.exists(self.dbpath):
             os.mkdir(self.dbpath)
         self.pruning_limit = config.getint('leveldb', 'pruning_limit')
@@ -30,7 +37,7 @@ class Storage(object):
             self.db_hist = plyvel.DB(os.path.join(self.dbpath,'hist'), create_if_missing=True, compression=None)
             self.db_undo = plyvel.DB(os.path.join(self.dbpath,'undo'), create_if_missing=True, compression=None)
         except:
-            traceback.print_exc(file=sys.stdout)
+            logger.error('db init', exc_info=True)
             self.shared.stop()
 
         self.db_version = 3 # increase this when database needs to be updated
@@ -39,10 +46,9 @@ class Storage(object):
             print_log("Database version", self.db_version)
             print_log("Blockchain height", self.height)
         except:
-            #traceback.print_exc(file=sys.stdout)
             print_log('initializing database')
             self.height = 0
-            self.last_hash = '4e9b54001f9976049830128ec0331515eaabe35a70970d79971da1539a400ba1'
+            self.last_hash = GENESIS_HASH
             db_version = self.db_version
             # write root
             self.put_node('', {})
@@ -65,7 +71,7 @@ class Storage(object):
         return bc_address_to_hash_160(addr)
 
     def key_to_address(self, addr):
-        return hash_160_to_bc_address(addr)
+        return hash_160_to_pubkey_address(addr)
 
 
     def get_proof(self, addr):
@@ -98,6 +104,8 @@ class Storage(object):
 
     def listunspent(self, addr):
         key = self.address_to_key(addr)
+        if key is None:
+            raise BaseException('Invalid Viacoin address', addr)
 
         out = []
         for k, v in self.db_utxo.iterator(start=key):

@@ -1,9 +1,9 @@
-IRC is used by Electrum server to find 'peers' - other Electrum servers. The
+IRC is used by Vialectrum server to find 'peers' - other Vialectrum servers. The
 current list can be seen by running:
 
-    electrum-server peers
+    vialectrum-server peers
 
-The following config file options are used by the IRC part of Electrum server:
+The following config file options are used by the IRC part of Vialectrum server:
 
     [server]
     irc = yes
@@ -13,14 +13,14 @@ The following config file options are used by the IRC part of Electrum server:
     #report_stratum_http_port = 80
 
 `irc` is used to determine whether the IRC thread will be started or the 
-Electrum server will run in private mode (default). In private mode, 
-`electrum-server peers` will always return an empty list.
+Vialectrum server will run in private mode (default). In private mode, 
+`vialectrum-server peers` will always return an empty list.
 
-`host` is a fully-qualified domain name (FQDN) of your Electrum server. It is
+`host` is a fully-qualified domain name (FQDN) of your Vialectrum server. It is
 used both when binding the listener for incoming client connections and as part
 of the realname field in IRC (see below).
 
-`report_host` is a an optional fully-qualified domain name (FQDN) of your Electrum server 
+`report_host` is a an optional fully-qualified domain name (FQDN) of your Vialectrum server 
 instead of `host`. It is used as part of the name field in IRC for incoming client connections.
 This is useful in a NAT setup where you bind to a private IP locally but have an external IP
 set up at your router and external DNS.
@@ -32,7 +32,7 @@ where you might want to bind to a high port locally but DNAT a different possibl
 port for inbound connections
 
 `irc_nick` is a nick name that will be appended to the E_ suffix when 
-composing the IRC nickname to identify your server on #electrum.
+composing the IRC nickname to identify your server on #vialectrum.
 
 Please note the IRC name field can only contain 50 chars and will be composed
 of `host` + protocol version number + Port numbers for the various protocols.

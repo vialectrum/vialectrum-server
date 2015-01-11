@@ -11,7 +11,7 @@ fi
 source_dir=$(cd "$(dirname "${BASH_SOURCE[0]}" )"; pwd)
 
 
-electrum_config="/etc/electrum.conf"
+electrum_config="/etc/vialectrum.conf"
 function read_config()
 {
     text=$1
@@ -25,18 +25,18 @@ function write_config()
 # create config file
 if [ ! -f $electrum_config ]; then
     echo "Creating config file"
-    cp $source_dir"/electrum.conf.sample" $electrum_config
+    cp $source_dir"/vialectrum.conf.sample" $electrum_config
 fi
 
 
 # read username
 user=$(read_config "username")
 if ! [ "$user" ]; then
-    read -p "username for running daemon (default: electrum) " -r
+    read -p "username for running daemon (default: vialectrum) " -r
     if [ $REPLY ]; then
 	user=$REPLY
     else
-	user="electrum"
+	user="vialectrum"
     fi 
     write_config "username" $user
 fi
@@ -52,7 +52,7 @@ fi
 
 
 # read path from config
-default_path="/var/electrum-server"
+default_path="/var/vialectrum-server"
 path=$(read_config "path")
 if ! [ "$path" ]; then
     read -p "Path for database (default: $default_path) " -r
@@ -65,7 +65,7 @@ if ! [ "$path" ]; then
 fi
 
 # read path from config
-default_logfile="/var/log/electrum.log"
+default_logfile="/var/log/vialectrum.log"
 logfile=$(read_config "logfile")
 if ! [ "$logfile" ]; then
     read -p "Path of logfile (default: $default_logfile) " -r
@@ -87,11 +87,11 @@ fi
 # download database
 if [ ! -d $path ]; then
     echo "Database not found in $path."
-    read -p "Do you want to download it from the Electrum foundry to $path ? " -n 1 -r
+    read -p "Do you want to download it from the Vialectrum foundry to $path ? " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
 	mkdir -p $path
-	wget -O - "http://foundry.electrum.org/leveldb-dump/electrum-fulltree-100-latest.tar.gz" | tar --extract --gunzip --strip-components 1 --directory $path --file -
+	wget -O - "http://foundry.vialectrum.org/leveldb-dump/vialectrum-fulltree-100-latest.tar.gz" | tar --extract --gunzip --strip-components 1 --directory $path --file -
     fi
 fi
 
@@ -107,16 +107,16 @@ if ! [ -f $logfile ]; then
 fi
 
 
-bitcoind_user=$(read_config "bitcoind_user")
-if ! [ "$bitcoind_user" ]; then
-    read -p "rpcuser (from your bitcoin.conf file): " -r
-    write_config "bitcoind_user" $REPLY
+bitcoind_user=$(read_config "viacoind_user")
+if ! [ "$viacoind_user" ]; then
+    read -p "rpcuser (from your viacoin.conf file): " -r
+    write_config "viacoind_user" $REPLY
 fi
 
-bitcoind_password=$(read_config "bitcoind_password")
-if ! [ "$bitcoind_password" ]; then
-    read -p "rpcpassword (from your bitcoin.conf file): " -r
-    write_config "bitcoind_password" $REPLY
+bitcoind_password=$(read_config "viacoind_password")
+if ! [ "$viacoind_password" ]; then
+    read -p "rpcpassword (from your viacoin.conf file): " -r
+    write_config "viacoind_password" $REPLY
 fi
 
 
@@ -124,4 +124,4 @@ fi
 echo "Configuration written to $electrum_config."
 echo "Please edit this file to finish the configuration."
 echo "If you have not done so, please run 'python setup.py install'"
-echo "Then, run 'electrum-server' to start the daemon"
+echo "Then, run 'vialectrum-server' to start the daemon"

@@ -12,7 +12,7 @@ requirements.
 
 The most up-to date version of this document is available at:
 
-    https://github.com/spesmilo/electrum-server/blob/master/HOWTO.md
+    https://github.com/vialectrum/vialectrum-server/blob/master/HOWTO.md
 
 Conventions
 -----------
@@ -20,8 +20,8 @@ Conventions
 In this document, lines starting with a hash sign (#) or a dollar sign ($)
 contain commands. Commands starting with a hash should be run as root,
 commands starting with a dollar should be run as a normal user (in this
-document, we assume that user is called 'bitcoin'). We also assume the
-bitcoin user has sudo rights, so we use '$ sudo command' when we need to.
+document, we assume that user is called 'viacoin'). We also assume the
+viacoin user has sudo rights, so we use '$ sudo command' when we need to.
 
 Strings that are surrounded by "lower than" and "greater than" ( < and > )
 should be replaced by the user with something appropriate. For example,
@@ -54,12 +54,12 @@ Python libraries.
 
 **Hardware.** The lightest setup is a pruning server with diskspace 
 requirements of about 10 GB for the electrum database. However note that 
-you also need to run bitcoind and keep a copy of the full blockchain, 
+you also need to run viacoind and keep a copy of the full blockchain,
 which is roughly 20 GB in April 2014. If you have less than 2 GB of RAM 
-make sure you limit bitcoind to 8 concurrent connections. If you have more 
+make sure you limit viacoind to 8 concurrent connections. If you have more
 resources to spare you can run the server with a higher limit of historic 
 transactions per address. CPU speed is important for the initial block 
-chain import, but is also important if you plan to run a public Electrum server, 
+chain import, but is also important if you plan to run a public Vialectrum server,
 which could serve tens of concurrent requests. Any multi-core x86 CPU from 2009 or
 newer other than an Atom should do for good performance. An ideal setup
 has enough RAM to hold and process the leveldb database in tmpfs (e.g. /dev/shm).
@@ -67,21 +67,21 @@ has enough RAM to hold and process the leveldb database in tmpfs (e.g. /dev/shm)
 Instructions
 ------------
 
-### Step 1. Create a user for running bitcoind and Vialectrum server
+### Step 1. Create a user for running viacoind and Vialectrum server
 
 This step is optional, but for better security and resource separation I
-suggest you create a separate user just for running `bitcoind` and Vialectrum.
+suggest you create a separate user just for running `viacoind` and Vialectrum.
 We will also use the `~/bin` directory to keep locally installed files
 (others might want to use `/usr/local/bin` instead). We will download source
 code files to the `~/src` directory.
 
     $ sudo adduser viacoin --disabled-password
     $ sudo apt-get install git
-    $ sudo su - bitcoin
+    $ sudo su - viacoin
     $ mkdir ~/bin ~/src
     $ echo $PATH
 
-If you don't see `/home/bitcoin/bin` in the output, you should add this line
+If you don't see `/home/viacoin/bin` in the output, you should add this line
 to your `.bashrc`, `.profile`, or `.bash_profile`, then logout and relogin:
 
     PATH="$HOME/bin:$PATH"
@@ -92,7 +92,7 @@ to your `.bashrc`, `.profile`, or `.bash_profile`, then logout and relogin:
 ### Step 3. Configure and start viacoind
 
 In order to allow Vialectrum to "talk" to `viacoind`, we need to set up an RPC
-username and password for `bitcoind`. We will then start `bitcoind` and
+username and password for `viacoind`. We will then start `viacoind` and
 wait for it to complete downloading the blockchain.
 
     $ mkdir ~/.viacoin
@@ -115,24 +115,24 @@ If you have a fresh copy of viacoind start `viacoind`:
 
     $ viacoind
 
-Allow some time to pass for `bitcoind` to connect to the network and start
+Allow some time to pass for `viacoind` to connect to the network and start
 downloading blocks. You can check its progress by running:
 
     $ viacoind getinfo
 
-Before starting the electrum server your bitcoind should have processed all 
+Before starting the vialectrum server your viacoind should have processed all
 blockes and caught up to the current height of the network.
-You should also set up your system to automatically start bitcoind at boot
+You should also set up your system to automatically start viacoind at boot
 time, running as the 'viacoin' user. Check your system documentation to
 find out the best way to do this.
 
-### Step 4. Download and install Electrum Server
+### Step 4. Download and install Vialectrum Server
 
-We will download the latest git snapshot for Electrum to configure and install it:
+We will download the latest git snapshot for Vialectrum to configure and install it:
 
     $ cd ~
-    $ git clone https://github.com/spesmilo/electrum-server.git
-    $ cd electrum-server
+    $ git clone https://github.com/vialectrum/vialectrum-server.git
+    $ cd vialectrum-server
     $ sudo configure
     $ sudo python setup.py install
 
@@ -227,7 +227,7 @@ When asked for a challenge password just leave it empty and press enter.
     ...
     Country Name (2 letter code) [AU]:US
     State or Province Name (full name) [Some-State]:California
-    Common Name (eg, YOUR name) []: electrum-server.tld
+    Common Name (eg, YOUR name) []: vialectrum-server.tld
     ...
     A challenge password []:
     ...
@@ -235,7 +235,7 @@ When asked for a challenge password just leave it empty and press enter.
     $ openssl x509 -req -days 730 -in server.csr -signkey server.key -out server.crt
 
 The server.crt file is your certificate suitable for the ssl_certfile= parameter and
-server.key corresponds to ssl_keyfile= in your electrum server config.
+server.key corresponds to ssl_keyfile= in your vialectrum server config.
 
 Starting with Vialectrum 1.9, the client will learn and locally cache the SSL certificate 
 for your server upon the first request to prevent man-in-the middle attacks for all
@@ -249,7 +249,7 @@ in case you need to restore it.
 ### Step 9. Configure Vialectrum server
 
 Vialectrum reads a config file (/etc/vialectrum.conf) when starting up. This
-file includes the database setup, bitcoind RPC setup, and a few other
+file includes the database setup, viacoind RPC setup, and a few other
 options.
 
 The "configure" script listed above will create a config file at /etc/vialectrum.conf
@@ -260,16 +260,16 @@ If you intend to run the server publicly have a look at README-IRC.md
 
 ### Step 10. Tweak your system for running vialectrum
 
-Electrum server currently needs quite a few file handles to use leveldb. It also requires
+Vialectrum server currently needs quite a few file handles to use leveldb. It also requires
 file handles for each connection made to the server. It's good practice to increase the
 open files limit to 64k. 
 
-The "configure" script will take care of this and ask you to create a user for running electrum-server.
+The "configure" script will take care of this and ask you to create a user for running vialectrum-server.
 If you're using user viacoin to run vialectrum and have added it manually like shown in this HOWTO run 
 the following code to add the limits to your /etc/security/limits.conf:
 
-     echo "bitcoin hard nofile 65536" >> /etc/security/limits.conf
-     echo "bitcoin soft nofile 65536" >> /etc/security/limits.conf
+     echo "viacoin hard nofile 65536" >> /etc/security/limits.conf
+     echo "viacoin soft nofile 65536" >> /etc/security/limits.conf
 
 Two more things for you to consider:
 
@@ -278,11 +278,11 @@ Two more things for you to consider:
 2. Consider restarting viacoind (together with vialectrum-server) on a weekly basis to clear out unconfirmed
    transactions from the local the memory pool which did not propagate over the network.
 
-### Step 11. (Finally!) Run Electrum server
+### Step 11. (Finally!) Run Vialectrum server
 
 The magic moment has come: you can now start your vialectrum server as root (it will su to your unprivileged user):
 
-    # electrum-server start
+    # vialectrum-server start
 
 Note: If you want to run the server without installing it on your system, just run 'run_vialectrum_server" as the
 unprivileged user.
@@ -291,21 +291,21 @@ You should see this in the log file:
 
     starting Vialectrum server
 
-If you want to stop Electrum server, use the 'stop' command:
+If you want to stop Vialectrum server, use the 'stop' command:
 
     # vialectrum-server stop
 
 
-If your system supports it, you may add electrum-server to the /etc/init.d directory. 
+If your system supports it, you may add vialectrum-server to the /etc/init.d directory.
 This will ensure that the server is started and stopped automatically, and that the database is closed 
 safely whenever your machine is rebooted.
 
-    # ln -s `which electrum-server` /etc/init.d/electrum-server
-    # update-rc.d electrum-server defaults
+    # ln -s `which vialectrum-server` /etc/init.d/vialectrum-server
+    # update-rc.d vialectrum-server defaults
 
-### Step 12. Test the Electrum server
+### Step 12. Test the Vialectrum server
 
-We will assume you have a working Electrum client, a wallet, and some
+We will assume you have a working Vialectrum client, a wallet, and some
 transactions history. You should start the client and click on the green
 checkmark (last button on the right of the status bar) to open the Server
 selection window. If your server is public, you should see it in the list
@@ -314,7 +314,7 @@ or hostname and the port. Press 'Ok' and the client will disconnect from the
 current server and connect to your new vialectrum server. You should see your
 addresses and transactions history. You can see the number of blocks and
 response time in the Server selection window. You should send/receive some
-bitcoins to confirm that everything is working properly.
+viacoins to confirm that everything is working properly.
 
 ### Step 13. Join us on IRC, subscribe to the server thread
 
@@ -324,6 +324,6 @@ on supporting the community by running an vialectrum node.
 
 If you're operating a public Vialectrum server please subscribe
 to or regulary check the following thread:
-https://bitcointalk.org/index.php?topic=85475.0
+https://viacointalk.org/index.php?topic=85475.0
 It'll contain announcements about important updates to Vialectrum
 server required for a smooth user experience.

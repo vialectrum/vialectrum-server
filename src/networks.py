@@ -10,5 +10,15 @@ params = {
         'pubkey_address': 111,
         'script_address': 196,
         'genesis_hash': '000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943'
+    },
+    'viacoin_main': {
+        'pubkey_address': 71,
+        'script_address': 33,
+        'genesis_hash': '4e9b54001f9976049830128ec0331515eaabe35a70970d79971da1539a400ba1'
+    },
+    'viacoin_test': {
+        'pubkey_address': 127,
+        'script_address': 196,
+        'genesis_hash': '4e9b54001f9976049830128ec0331515eaabe35a70970d79971da1539a400ba1'
     }
 }

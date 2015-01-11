@@ -109,7 +109,7 @@ def create_config(filename=None):
 
     # set network parameters
     config.add_section('network')
-    config.set('network', 'type', 'bitcoin_main')
+    config.set('network', 'type', 'viacoin_main')
 
     # try to find the config file in the default paths
     if not filename:
@@ -119,7 +119,7 @@ def create_config(filename=None):
                 break
 
     if not os.path.isfile(filename):
-        print 'could not find electrum configuration file "%s"' % filename
+        print 'could not find vialectrum configuration file "%s"' % filename
         sys.exit(1)
 
     attempt_read_config(config, filename)

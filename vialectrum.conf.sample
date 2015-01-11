@@ -29,6 +29,6 @@ pruning_limit = 100
 [viacoind]
 viacoind_host = localhost
 viacoind_port = 5222
-# user and password from bitcoin.conf
+# user and password from viacoin.conf
 viacoind_user = 
 viacoind_password = 

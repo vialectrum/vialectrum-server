@@ -69,7 +69,7 @@ case "$1" in
 	    echo "Server not running"
 	    exit
 	fi
-        cmd="run_electrum_server stop"
+        cmd="run_vialectrum_server stop"
 	if [ `id -u` = 0 ] ; then
             su $user -c "$cmd"
 	else
@@ -91,7 +91,7 @@ case "$1" in
 	    echo "Server not running"
 	    exit
 	fi
-        cmd="run_electrum_server $1"
+        cmd="run_vialectrum_server $1"
 	if [ `id -u` = 0 ] ; then
             su $user -c "$cmd"
 	else
